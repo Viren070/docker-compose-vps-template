@@ -1,0 +1,28 @@
+services:
+  dozzle:
+    image: amir20/dozzle:latest
+    container_name: dozzle
+    restart: unless-stopped
+    expose: 
+      - 8080
+    environment:
+      - DOZZLE_ENABLE_ACTIONS=true
+      - DOZZLE_NO_ANALYTICS=true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dozzle.rule=Host(`${DOZZLE_HOSTNAME?}`)"
+      - "traefik.http.routers.dozzle.entrypoints=websecure"
+      - "traefik.http.routers.dozzle.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dozzle.middlewares=authelia@docker"
+      # - "traefik.http.middlewares.dozzle-auth.basicauth.users=${DOZZLE_USERNAME?}:${DOZZLE_HASHED_PASSWORD?}"
+      - "flame.type=app"
+      - "flame.name=Dozzle"
+      - "flame.url=https://${DOZZLE_HOSTNAME?}"
+    healthcheck:
+      test: ["CMD", "/dozzle", "healthcheck"]
+      interval: 3s
+      timeout: 30s
+      retries: 5
+      start_period: 30s

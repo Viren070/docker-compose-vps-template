@@ -1,0 +1,60 @@
+services:
+  traefik:
+    image: traefik:v3
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - 443:443
+      - 80:80
+    command:
+      - '--api=true'
+      - '--api.dashboard=true'
+      - '--api.insecure=false'
+      - '--global.sendAnonymousUsage=false'
+      - '--global.checkNewVersion=false'
+      - '--log=true'
+      - '--log.level=DEBUG'
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+  
+      - "--entryPoints.web.address=:80"
+      - "--entryPoints.websecure.address=:443"
+      
+      
+      - "--entryPoints.web.forwardedHeaders.insecure=false"
+      - "--entryPoints.web.proxyProtocol.insecure=false"
+
+      - "--entryPoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entryPoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entryPoints.web.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
+      - "--entryPoints.web.proxyProtocol.trustedIPs=${TRUSTED_IPS}"
+
+
+      - "--entryPoints.websecure.forwardedHeaders.insecure=false"
+      - "--entryPoints.websecure.proxyProtocol.insecure=false"
+      - "--entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
+      - "--entryPoints.websecure.proxyProtocol.trustedIPs=${TRUSTED_IPS}"
+
+      - "--certificatesresolvers.letsencrypt.acme.tlschallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL?}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/config/acme.json"
+      - "--log.level=INFO"
+      - "--ping"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "${DOCKER_DATA_DIR}/traefik:/config"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.rule=Host(`${TRAEFIK_HOSTNAME?}`)"
+      - "traefik.http.routers.api.entrypoints=websecure"
+      - "traefik.http.routers.api.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.api.service=api@internal"
+      - "traefik.http.routers.api.middlewares=authelia@docker"
+    healthcheck:
+      test: ["CMD", "traefik", "healthcheck", "--ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      authelia:
+        condition: service_healthy

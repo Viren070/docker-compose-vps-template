@@ -1,0 +1,50 @@
+services:
+  zilean:
+    image: ipromknight/zilean:latest
+    restart: unless-stopped
+    container_name: zilean
+    tty: true
+    environment:
+      Zilean__Database__ConnectionString: Host=zilean_postgres;Database=zilean;Username=zilean;Password=postgres;Include Error Detail=true;Timeout=30;CommandTimeout=3600
+      Zilean__Imdb__UseAllCores: true
+      Zilean__Imdb__UseLucene: true
+      Zilean__Parsing__BatchSize: 100000
+      Zilean__Dmm_ScrapeSchedule: 32 * * * *
+    healthcheck:
+      test: curl --connect-timeout 10 --silent --show-error --fail http://localhost:8181/healthchecks/ping
+      timeout: 60s
+      interval: 30s
+      retries: 10
+    depends_on:
+      zilean_postgres:
+        condition: service_healthy
+    volumes:
+      - ${DOCKER_DATA_DIR}/zilean/tmp:/tmp
+    profiles:
+      - zilean
+      - stremio
+      - debrid_media_server
+      - all
+
+  zilean_postgres:
+    image: postgres:17.2-alpine
+    container_name: zilean_postgres
+    restart: unless-stopped
+    shm_size: 2G
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+      POSTGRES_USER: zilean
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: zilean
+    volumes:
+      - ${DOCKER_DATA_DIR}/zilean/db:/var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d zilean" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - zilean
+      - stremio
+      - debrid_media_server
+      - all

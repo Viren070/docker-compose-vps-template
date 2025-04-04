@@ -1,0 +1,26 @@
+services:
+  nzbhydra2:
+    image: ghcr.io/hotio/nzbhydra2:latest
+    container_name: nzbhydra2
+    restart: unless-stopped
+    expose:
+      - 5076
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=002
+      - TZ=${TZ:-UTC} 
+    volumes:
+      - ${DOCKER_DATA_DIR}/nzbhydra:/config
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nzbhydra2.rule=Host(`${NZBHYDRA2_HOSTNAME?}`)"
+      - "traefik.http.routers.nzbhydra2.entrypoints=websecure"
+      - "traefik.http.routers.nzbhydra2.tls.certresolver=letsencrypt"
+      - "flame.type=app"
+      - "flame.name=NZBHydra2"
+      - "flame.url=https://${NZBHYDRA2_HOSTNAME}"
+    profiles:
+      - nzbhydra2
+      - all
+      - indexers

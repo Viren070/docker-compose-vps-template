@@ -1,0 +1,27 @@
+services:
+  aiostreams:
+    image: ghcr.io/viren070/aiostreams:latest
+    container_name: aiostreams
+    restart: unless-stopped
+    expose:
+      - 3000
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aiostreams.rule=Host(`${AIOSTREAMS_HOSTNAME?}`)"
+      - "traefik.http.routers.aiostreams.entrypoints=websecure"
+      - "traefik.http.routers.aiostreams.tls.certresolver=letsencrypt"
+      - "flame.type=app"
+      - "flame.name=AIOStreams"
+      - "flame.url=https://${AIOSTREAMS_HOSTNAME}"
+    healthcheck:
+      test: wget -qO- http://localhost:3000/health
+      interval: 1m
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    profiles:
+      - aiostreams
+      - stremio
+      - all

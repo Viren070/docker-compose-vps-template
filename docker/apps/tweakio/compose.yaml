@@ -1,0 +1,14 @@
+services:
+  tweakio:
+    image: varthe/tweakio:latest
+    container_name: tweakio
+    restart: unless-stopped
+    user: $PUID:$PGID
+    expose:
+      - 3185
+    volumes:
+      - ${DOCKER_DATA_DIR}/tweakio/config.yaml:/app/config.yaml
+    profiles:
+      - all
+      - debrid_media_server
+      - tweakio

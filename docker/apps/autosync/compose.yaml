@@ -1,0 +1,34 @@
+services:
+  autosync:
+    image: ghcr.io/pukabyte/autosync:latest
+    container_name: autosync
+    restart: unless-stopped
+    expose:
+      - 3536
+    environment:
+      - TZ=${TZ:-UTC}
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=022
+    volumes:
+      - ${DOCKER_DATA_DIR}/autosync/config.yaml:/app/config.yaml
+      - /etc/localtime:/etc/localtime:ro
+      - /mnt:/mnt
+    depends_on:
+      plex:
+        condition: service_healthy
+      sonarr:
+        condition: service_healthy
+      sonarr4k:
+        condition: service_healthy
+      sonarranime:
+        condition: service_healthy
+      radarr:
+        condition: service_healthy
+      radarr4k:
+        condition: service_healthy
+      radarranime:
+        condition: service_healthy
+    profiles:
+      - autosync
+      - debrid_media_server

@@ -1,3 +1,12 @@
+# =================================== #
+# ███████╗██╗   ██╗██████╗  ██████╗   #
+# ╚══███╔╝██║   ██║██╔══██╗██╔════╝   #
+#   ███╔╝ ██║   ██║██████╔╝██║  ███╗  #
+#  ███╔╝  ██║   ██║██╔══██╗██║   ██║  #
+# ███████╗╚██████╔╝██║  ██║╚██████╔╝  #
+# ╚══════╝ ╚═════╝ ╚═╝  ╚═╝ ╚═════╝   #
+# =================================== #
+
 # ==============================================================================
 #                           BASIC CONFIGURATION
 # ==============================================================================
@@ -8,9 +17,10 @@ zurg: v1
 # Get it from https://real-debrid.com/apitoken
 token: 
 
-# If you have other Real-Debrid tokens, you can add them here, uncomment the lines below
+# If you have other Real-Debrid tokens, you can uncomment the lines below and add them here
 # download_tokens:
-#   - ANOTHER_RD_TOKEN
+#   - MY_TOKEN_2
+#   - MY_TOKEN_3
 # ==============================================================================
 #                          CORE SETTINGS
 # ==============================================================================
@@ -24,6 +34,7 @@ number_of_hosts: 3
 # ==============================================================================
 #                         PERFORMANCE AND RATE LIMITS
 # ==============================================================================
+
 concurrent_workers: 32
 api_rate_limit_per_minute: 60
 torrents_rate_limit_per_minute: 25
@@ -31,14 +42,14 @@ api_timeout_secs: 15
 download_timeout_secs: 10
 retries_until_failed: 2
 retry_503_errors: false 
-fetch_torrents_page_size: 500
+fetch_torrents_page_size: 1000
 
 # ==============================================================================
 #                         FILE MANAGEMENT
 # ==============================================================================
 
 # Enable automatic torrent repair
-enable_repair: false
+enable_repair: true
 
 # Action for RAR files: extract, delete, or none (default: "none")
 rar_action: none
@@ -71,6 +82,9 @@ hide_broken_torrents: false
 # Will ignore rename values in the torrent
 ignore_renames: true
 
+# Whether to safe .STRM files
+save_strm_files: false
+
 # ==============================================================================
 #                      SCHEDULING AND UPDATES
 # ==============================================================================
@@ -79,7 +93,7 @@ ignore_renames: true
 check_for_changes_every_secs: 20
 
 # How often to check for broken torrents and repair them (default: 60 minutes)
-# repair_every_mins: 60
+repair_every_mins: 60
 
 # How often to check for new downloads (unrestricted links, file locker links) (default: 720 minutes)
 downloads_every_mins: 720
@@ -105,4 +119,4 @@ cache_network_test_results: true
 #                         ADVANCED SETTINGS
 # ==============================================================================
 
-serve_from_rclone: true
+disable_stream_proxy: false

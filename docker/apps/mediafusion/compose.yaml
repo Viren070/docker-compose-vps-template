@@ -1,0 +1,99 @@
+services:
+  mediafusion:
+    image: mhdzumair/mediafusion:latest
+    container_name: mediafusion
+    restart: unless-stopped
+    expose:
+      - 8000
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    depends_on:
+      mediafusion_mongodb:
+        condition: service_healthy
+      mediafusion_redis:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mediafusion.rule=Host(`${MEDIAFUSION_HOSTNAME?}`)"
+      - "traefik.http.routers.mediafusion.entrypoints=websecure"
+      - "traefik.http.routers.mediafusion.tls.certresolver=letsencrypt"
+      - "flame.type=app"
+      - "flame.name=MediaFusion"
+      - "flame.url=https://${MEDIAFUSION_HOSTNAME?}"
+    profiles:
+      - mediafusion
+      - stremio
+      - all
+
+  mediafusion_scheduler:
+    image: mhdzumair/mediafusion:latest
+    container_name: mediafusion_scheduler
+    command: ["dramatiq", "api.task", "-p", "1", "-t", "4"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    depends_on:
+      mediafusion_mongodb:
+        condition: service_healthy
+      mediafusion_redis:
+        condition: service_healthy
+    profiles:
+      - mediafusion
+      - stremio
+      - all
+  
+  browserless:
+    image: ghcr.io/browserless/chromium
+    container_name: browserless
+    environment:
+      - TIMEOUT=-1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/json/version"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles:
+      - mediafusion
+      - stremio
+      - all
+
+  mediafusion_mongodb:
+    image: mongo:latest
+    container_name: mediafusion_mongodb
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_DATA_DIR}/mediafusion/db:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    profiles:
+      - mediafusion
+      - stremio
+      - all
+
+  mediafusion_redis:
+    image: redis:latest
+    container_name: mediafusion_redis
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_DATA_DIR}/mediafusion/cache:/data
+    command: redis-server --appendonly yes --save 60 1
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - mediafusion
+      - stremio
+      - all

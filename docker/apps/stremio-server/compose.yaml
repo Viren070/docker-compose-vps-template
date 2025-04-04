@@ -1,0 +1,19 @@
+services:
+  stremio-server:
+    image: stremio/server:latest
+    container_name: stremio-server
+    expose:
+      - 11470
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stremio-server.rule=Host(`${STREMIO_SERVER_HOSTNAME?}`)"
+      - "traefik.http.routers.stremio-server.entrypoints=websecure"
+      - "traefik.http.routers.stremio-server.tls.certresolver=letsencrypt"
+      - "flame.type=app"
+      - "flame.name=Stremio Server"
+      - "flame.url=https://${STREMIO_SERVER_HOSTNAME}"
+    profiles:
+      - stremio-server
+      - stremio
+      - all

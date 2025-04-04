@@ -1,0 +1,54 @@
+
+include:
+  - radarr/compose.yaml
+  - sonarr/compose.yaml
+  - addon-manager/compose.yaml
+  - aiostreams/compose.yaml
+  - aiostremio/compose.yaml
+  - autosync/compose.yaml
+  - bazarr/compose.yaml
+  - byparr/compose.yaml
+  - comet/compose.yaml
+  - dash/compose.yaml
+  - dozzle/compose.yaml
+  - flame/compose.yaml
+  - gluetun/compose.yaml
+  - honey/compose.yaml
+  - jackett/compose.yaml
+  - jackettio/compose.yaml
+  - jellyfin/compose.yaml
+  - jellyseer/compose.yaml
+  - mediaflow-proxy/compose.yaml
+  - mediafusion/compose.yaml
+  - minecraft/compose.yaml
+  - nzbhydra2/compose.yaml
+  - omg-tv-addon/compose.yaml
+  - overseerr/compose.yaml
+  - plausible/compose.yaml
+  - plex/compose.yaml
+  - prowlarr/compose.yaml
+  - recyclarr/compose.yaml
+  - seanime/compose.yaml
+  - searxng/compose.yaml
+  - stremio-catalog-providers/compose.yaml
+  - stremio-jackett/compose.yaml
+  - stremio-server/compose.yaml
+  - stremio-trakt-addon/compose.yaml
+  - stremthru/compose.yaml
+  - tautulli/compose.yaml
+  - tmdb-addon/compose.yaml
+  - torbox-manager/compose.yaml
+  - traefik/compose.yaml
+  - tweakio/compose.yaml
+  - uptime-kuma/compose.yaml
+  - vaultwarden/compose.yaml
+  - warp/compose.yaml
+  - watchtower/compose.yaml
+  - wests-scripts/compose.yaml
+  - zilean/compose.yaml
+  - zurg/compose.yaml
+  
+networks:
+  default:
+    name: ${DOCKER_NETWORK:-aio_default}
+    external: ${DOCKER_NETWORK_EXTERNAL:-false}

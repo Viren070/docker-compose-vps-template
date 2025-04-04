@@ -1,0 +1,45 @@
+services:
+  plex:
+    image: plexinc/pms-docker:latest
+    container_name: plex
+    restart: unless-stopped
+    ports:
+      - 1900/udp
+      - "32400:32400/tcp"
+      - 32410/udp
+      - 32412/udp
+      - 32413/udp
+      - 32414/udp
+      - 32469/tcp
+      - 8324/tcp
+    expose:
+      - 32400
+    environment:
+      - PLEX_UID=${PUID}
+      - PLEX_GID=${PGID}
+      - PLEX_CLAIM=${PLEX_CLAIM}
+      - TZ=${TZ:-UTC}
+    volumes:
+      - /dev/shm:/dev/shm
+      - ${DOCKER_DATA_DIR}/plex/transcodes:/transcode
+      - /mnt:/mnt
+      - ${DOCKER_DATA_DIR}/plex/config:/config
+    labels:
+      - "traefik.enable=${PLEX_TRAEFIK_ENABLE:-true}"
+      - "traefik.http.routers.plex.rule=Host(`${PLEX_HOSTNAME?}`)"
+      - "traefik.http.routers.plex.entrypoints=websecure"
+      - "traefik.http.routers.plex.tls.certresolver=letsencrypt"
+      - "flame.type=app"
+      - "flame.name=Plex"
+      - "flame.url=https://${PLEX_HOSTNAME}"
+    healthcheck:
+      test: curl --connect-timeout 15 --silent --show-error --fail http://localhost:32400/identity
+      interval: 1m
+      timeout: 15s
+      retries: 3
+      start_period: 1m
+    depends_on:
+      - rclone
+    profiles:
+      - plex
+      - debrid_media_server

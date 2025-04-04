@@ -1,0 +1,19 @@
+services:
+  # Start page for your server
+  flame:
+    image: pawelmalak/flame:multiarch
+    container_name: flame
+    restart: unless-stopped
+    expose:
+      - 5005
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flame.rule=Host(`${FLAME_HOSTNAME?}`)"
+      - "traefik.http.routers.flame.entrypoints=websecure"
+      - "traefik.http.routers.flame.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.flame.middlewares=authelia@docker"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_DATA_DIR:-.}/flame:/app/data

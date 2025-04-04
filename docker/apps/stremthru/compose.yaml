@@ -1,0 +1,35 @@
+services:
+  stremthru:
+    image: muniftanjim/stremthru:latest
+    container_name: stremthru
+    restart: unless-stopped
+    expose:
+      - 8080
+    environment:
+      - STREMTHRU_HTTP_PROXY=http://warp:1080
+      - STREMTHRU_TUNNEL=*:false,torrentio.strem.fun:true       # Only tunnel hostnames that block VPS access (e.g. Torrentio)
+      - STREMTHRU_PROXY_AUTH=user1:pass1,user2:pass2
+      - STREMTHRU_STORE_AUTH=*:realdebrid:abc...xyz             # Add apikey
+      - STREMTHRU_STORE_TUNNEL=realdebrid:api                   # Only send RD API via tunnel, not all access (e.g playback)
+      - STREMTHRU_STORE_CONTENT_PROXY=*:true,easydebrid:false,premiumize:false
+      - STREMTHRU_PEER_URI=https://stremthru.13377001.xyz
+      - STREMTHRU_DATABASE_URI=sqlite://./data/stremthru.db
+      - STREMTHRU_REDIS_URI=redis://redis:6379
+    depends_on:
+      warp:
+        condition: service_healthy
+    volumes:
+      - ${DOCKER_DATA_DIR}/stremthru:/app/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stremthru.rule=Host(`${STREMTHRU_HOSTNAME?}`)"
+      - "traefik.http.routers.stremthru.entrypoints=websecure"
+      - "traefik.http.routers.stremthru.tls.certresolver=letsencrypt"
+      - "traefik.http.services.stremthru.loadbalancer.server.port=8080"
+      - "flame.type=app"
+      - "flame.name=StremThru"
+      - "flame.url=https://${STREMTHRU_HOSTNAME}"
+    profiles:
+      - stremthru
+      - stremio
+      - all

@@ -1,0 +1,63 @@
+services:
+  authelia:
+    container_name: 'authelia'
+    image: 'authelia/authelia'
+    restart: 'unless-stopped'
+    user: $PUID:$PGID
+    volumes:
+      - '${DOCKER_DATA_DIR}/authelia/config:/config'
+    environment:
+      TZ: ${TZ:-UTC}
+      X_AUTHELIA_CONFIG_FILTERS: template
+      TEMPLATE_AUTHELIA_SESSION_SECRET: ${AUTHELIA_SESSION_SECRET?}
+      TEMPLATE_DOMAIN: ${DOMAIN?}
+      TEMPLATE_AUTHELIA_SUBDOMAIN: ${AUTHELIA_SUBDOMAIN?}
+      TEMPLATE_AUTHELIA_STORAGE_ENCRYPTION_KEY: ${AUTHELIA_STORAGE_ENCRYPTION_KEY?}
+      TEMPLATE_AUTHELIA_WEBAUTHN_DISPLAY_NAME: ${AUTHELIA_WEBAUTHN_DISPLAY_NAME?}
+      TEMPLATE_AUTHELIA_JWT_SECRET: ${AUTHELIA_JWT_SECRET?}
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.authelia.rule=Host(`${AUTHELIA_SUBDOMAIN?}.${DOMAIN}`)"
+      - "traefik.http.routers.authelia.entryPoints=websecure"
+      - "traefik.http.routers.authelia.tls.certresolver=letsencrypt"
+      - "traefik.http.services.authelia.loadbalancer.server.port=9091"
+
+      - "traefik.http.middlewares.authelia.forwardAuth.address=http://authelia:9091/api/authz/forward-auth"
+      - "traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader=true"
+      - "traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Email,Remote-Name"
+
+    depends_on:
+      authelia_redis:
+        condition: service_healthy
+      authelia_postgres:
+        condition: service_healthy
+  
+  authelia_redis:
+    image: redis:latest
+    container_name: authelia_redis
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_DATA_DIR}/authelia/cache:/data
+    command: redis-server --appendonly yes --save 60 1
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  authelia_postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    container_name: authelia_postgres
+    volumes:
+      -  ${DOCKER_DATA_DIR}/authelia/db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: authelia
+      POSTGRES_PASSWORD: authelia
+      POSTGRES_DB: authelia
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U authelia -d authelia"]
+      start_period: 1m
+      interval: 20s
+      timeout: 5s
+      retries: 5

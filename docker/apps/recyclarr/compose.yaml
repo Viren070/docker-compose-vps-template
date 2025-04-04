@@ -1,0 +1,21 @@
+services:
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr:latest
+    container_name: recyclarr
+    user: $PUID:$PGID
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ:-UTC}
+    volumes:
+      - ${DOCKER_DATA_DIR}/recyclarr:/config
+    depends_on:
+      - sonarr
+      - sonarr4k
+      - sonarranime
+      - radarr
+      - radarr4k
+      - radarranime
+    profiles:
+      - all
+      - recyclarr
+      - debrid_media_server

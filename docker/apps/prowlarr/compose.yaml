@@ -1,0 +1,31 @@
+services:
+  prowlarr:
+    image: ghcr.io/hotio/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=002
+      - TZ=${TZ:-UTC}  
+    expose:
+      - 9696
+    volumes:
+      - ${DOCKER_DATA_DIR}/prowlarr/config:/config
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.prowlarr.rule=Host(`${PROWLARR_HOSTNAME?}`)"
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"
+      - "traefik.http.routers.prowlarr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.prowlarr.middlewares=authelia@docker"
+    healthcheck:
+      test: curl -f http://localhost:9696/ping
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    profiles:
+      - prowlarr
+      - stremio
+      - debrid_media_server
+      - all

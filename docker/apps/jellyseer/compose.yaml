@@ -1,0 +1,26 @@
+services:
+  jellyseer:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseer
+    restart: unless-stopped
+    expose:
+      - 5055
+    environment:
+      - TZ=${TZ:-UTC}
+      - LOG_LEVEL=debug
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jellyseer.rule=Host(`${JELLYSEER_HOSTNAME}`)"
+      - "traefik.http.routers.jellyseer.entrypoints=websecure"
+      - "traefik.http.routers.jellyseer.tls.certresolver=letsencrypt"
+      - "flame.type=app"
+      - "flame.name=Jellyseer"
+      - "flame.url=https://${JELLYSEER_HOSTNAME}"
+    volumes:
+      - ${DOCKER_DATA_DIR}/jellyseer:/app/config
+    depends_on:
+      - rclone
+    profiles:
+      - jellyseer
+      - debrid_media_server
+      - all

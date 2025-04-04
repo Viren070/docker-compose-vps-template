@@ -1,0 +1,16 @@
+services:
+  rd_account_check:
+    build:
+      context: .
+      args:
+        - "--force-rm"
+    pull_policy: build
+    image: rd_account_check
+    container_name: rd_account_check
+    env_file:
+      - .env
+    volumes:
+      - ${DOCKER_DATA_DIR}/realdebrid-account-monitor/data:/app/data
+    restart: unless-stopped
+
+

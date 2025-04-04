@@ -1,0 +1,20 @@
+services:
+  byparr:
+    image: ghcr.io/thephaseless/byparr
+    container_name: byparr
+    restart: unless-stopped
+    environment:
+      - LOG_LEVEL=INFO
+    volumes:
+      - ${DOCKER_DATA_DIR}/byparr/screenshots:/app/screenshots 
+    healthcheck:
+      test: curl -f http://localhost:8191/health
+      interval: 5m
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    profiles:
+      - byparr
+      - stremio
+      - debrid_media_server
+      - all

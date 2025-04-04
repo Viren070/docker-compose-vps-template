@@ -1,0 +1,61 @@
+services:
+  torbox-manager:
+    build:
+      context: https://github.com/jittarao/torbox-app.git
+      dockerfile_inline: |
+        # Builder stage
+        FROM node:22-alpine AS builder
+        WORKDIR /app
+
+        # Install dependencies
+        COPY package*.json ./
+        RUN npm ci
+
+        # Copy source code
+        COPY . /app
+
+        # Build the Next.js application
+        RUN npm run build
+
+        # Runner stage
+        FROM node:22-alpine AS runner
+        WORKDIR /app
+
+        # Set environment variables
+        ENV NODE_ENV=production
+        ENV HOSTNAME=0.0.0.0
+        ENV PORT=3000
+
+        # Copy package.json and package-lock.json
+        COPY package*.json ./
+
+        # Install only production dependencies
+        RUN npm ci --only=production
+
+        # Copy the built application from the builder stage
+        COPY --from=builder /app/.next ./.next
+        COPY --from=builder /app/public ./public
+        COPY --from=builder /app/node_modules ./node_modules
+
+        # Expose the port Next.js runs on
+        EXPOSE 3000
+
+        # Start the Next.js application
+        CMD ["npm", "start"]
+    image: torbox-manager
+    container_name: torbox-manager
+    expose:
+      - 3000
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tbm.rule=Host(`${TBM_HOSTNAME?}`)"
+      - "traefik.http.routers.tbm.entrypoints=websecure"
+      - "traefik.http.routers.tbm.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.tbm.middlewares=authelia@docker"
+      - "flame.type=app"
+      - "flame.name=TBM"
+      - "flame.url=https://${TBM_HOSTNAME}"
+    profiles:
+      - torbox_manager
+      - all

@@ -1,0 +1,20 @@
+services:
+  honey:
+    image: ghcr.io/dani3l0/honey:latest
+    container_name: honey
+    restart: unless-stopped
+    user: $PUID:$PGID
+    volumes:
+      - ${DOCKER_DATA_DIR}/honey:/app/dist/config
+      - ${DOCKER_DATA_DIR}/honey/img:/app/dist/img/custom
+    expose:
+      - 4173
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.honey.rule=Host(`${HONEY_HOSTNAME?}`)"
+      - "traefik.http.routers.honey.entrypoints=websecure"
+      - "traefik.http.routers.honey.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.honey.middlewares=authelia@docker"
+      - "flame.type=app"
+      - "flame.name=Honey"
+      - "flame.url=https://${HONEY_HOSTNAME?}"

@@ -1,0 +1,25 @@
+services:
+  jackettio:
+    image: arvida42/jackettio:latest
+    container_name: jackettio
+    restart: unless-stopped
+    user: $PUID:$PGID
+    expose:
+      - 4000
+    env_file:
+      - .env
+    volumes:
+      - ${DOCKER_DATA_DIR}/jackettio:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jackettio.rule=Host(`${JACKETTIO_HOSTNAME?}`)"
+      - "traefik.http.routers.jackettio.entrypoints=websecure"
+      - "traefik.http.routers.jackettio.tls.certresolver=letsencrypt"
+      - "flame.type=app"
+      - "flame.name=Jackettio"
+      - "flame.url=https://${JACKETTIO_HOSTNAME}"
+    profiles:
+      - jackettio
+      - stremio
+      - all
+    

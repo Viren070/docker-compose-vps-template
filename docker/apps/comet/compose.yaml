@@ -1,0 +1,51 @@
+services:
+  comet:
+    container_name: comet
+    image: g0ldyy/comet:latest
+    restart: unless-stopped
+    expose:
+      - 2020
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.comet.rule=Host(`${COMET_HOSTNAME}`)"
+      - "traefik.http.routers.comet.entrypoints=websecure"
+      - "traefik.http.routers.comet.tls.certresolver=letsencrypt"
+      - "flame.type=app"
+      - "flame.name=Comet"
+      - "flame.url=https://${COMET_HOSTNAME}"
+    volumes:
+      - ${DOCKER_DATA_DIR}/comet:/app/data
+    healthcheck: 
+      test: wget -qO- http://127.0.0.1:2020/health
+      interval: 1m
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    profiles:
+      - comet
+      - stremio
+      - all
+
+  # If you would like to use postgres instead of sqlite, uncomment the followling lines,
+  # and set the DATABASE_TYPE to postgres and DATABASE_URL to 
+  # comet_postgres:
+  #   image: postgres:latest
+  #   container_name: comet_postgres
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ${DOCKER_DATA_DIR}/comet/postgres:/var/lib/postgresql/data
+  #   environment:
+  #     - POSTGRES_USER=comet
+  #     - POSTGRES_PASSWORD=comet
+  #     - POSTGRES_DB=comet
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready", "-U", "comet"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   profiles:
+  #     - comet
+  #     - stremio
+  #     - all

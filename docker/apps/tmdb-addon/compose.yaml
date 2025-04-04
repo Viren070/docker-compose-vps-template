@@ -1,0 +1,49 @@
+services:
+  tmdb-addon:
+    image: viren070/tmdb-addon:latest
+    container_name: tmdb-addon
+    restart: unless-stopped
+    expose:
+      - 3232
+    environment:
+      - PORT=3232
+      - TMDB_API=${TMDB_API_KEY?}  # https://www.themoviedb.org/settings/api
+      - FANART_API=${FANART_API_KEY?}  # https://fanart.tv/get-an-api-key/
+      - HOST_NAME=${TMDB_ADDON_HOSTNAME?}
+      - MONGODB_URI=mongodb://mongodb:27017/tmdb
+      - META_TTL=604800  # 1 week
+      - CATALOG_TTL=86400  # 1 day
+      - NO_CACHE=false  # Enable cache, set to true to disable
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tmdb.rule=Host(`${TMDB_ADDON_HOSTNAME?}`)"
+      - "traefik.http.routers.tmdb.entrypoints=websecure"
+      - "traefik.http.routers.tmdb.tls.certresolver=letsencrypt"
+      - "traefik.http.services.tmdb.loadbalancer.server.port=3232"
+      - "flame.type=app"
+      - "flame.name=TMDB Addon"
+      - "flame.url=https://${TMDB_ADDON_HOSTNAME?}"
+    depends_on:
+      tmdb-addon_mongo:
+        condition: service_healthy
+    profiles:
+      - tmdb-addon
+      - stremio
+      - all
+  
+  tmdb-addon_mongo: 
+    image: mongo:latest
+    container_name: tmdb-addon_mongo
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_DATA_DIR}/tmdb-addon/db:/data/db
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+    profiles:
+      - tmdb-addon
+      - stremio
+      - all
