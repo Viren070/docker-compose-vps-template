@@ -14,9 +14,9 @@ services:
       - STREMTHRU_STORE_CONTENT_PROXY=*:true,easydebrid:false,premiumize:false
       - STREMTHRU_PEER_URI=https://stremthru.13377001.xyz
       - STREMTHRU_DATABASE_URI=sqlite://./data/stremthru.db
-      - STREMTHRU_REDIS_URI=redis://redis:6379
+      - STREMTHRU_REDIS_URI=redis://stremthru_redis:6379
     depends_on:
-      warp:
+      stremthru_redis:
         condition: service_healthy
     volumes:
       - ${DOCKER_DATA_DIR}/stremthru:/app/data
@@ -33,3 +33,21 @@ services:
       - stremthru
       - stremio
       - all
+  
+  stremthru_redis:
+    image: redis:latest
+    container_name: stremthru_redis
+    restart: unless-stopped
+    volumes:
+      - ${DOCKER_DATA_DIR}/mediafusion/cache:/data
+    command: redis-server --appendonly yes --save 60 1
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - mediafusion
+      - stremio
+      - all
+
