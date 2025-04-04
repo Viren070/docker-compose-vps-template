@@ -39,7 +39,7 @@ services:
     container_name: stremthru_redis
     restart: unless-stopped
     volumes:
-      - ${DOCKER_DATA_DIR}/mediafusion/cache:/data
+      - ${DOCKER_DATA_DIR}/stremthru/cache:/data
     command: redis-server --appendonly yes --save 60 1
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -47,7 +47,7 @@ services:
       timeout: 5s
       retries: 5
     profiles:
-      - mediafusion
+      - stremthru
       - stremio
       - all
 
