@@ -28,11 +28,10 @@ services:
       - zipline
       - all
     
-  zipline-db:
+  zipline_postgres:
     image: postgres:16
     restart: unless-stopped
-    container_name: zipline-db
-    user: $PUID:$PGID
+    container_name: zipline_postgres
     volumes:
       - ${DOCKER_DATA_DIR}/zipline/db:/var/lib/postgresql/data
     environment:
