@@ -7,13 +7,13 @@ services:
       - 80
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.addon-manager.rule=Host(`${ADDON_MANAGER_HOSTNAME?}`)"
+      - "traefik.http.routers.addon-manager.rule=Host(`${ADDON_MANAGER_SUBDOMAIN?}.${DOMAIN?}`)"
       - "traefik.http.routers.addon-manager.entrypoints=websecure"
       - "traefik.http.routers.addon-manager.tls.certresolver=letsencrypt"
       - "traefik.http.routers.addon-manager.middlewares=authelia@docker"
       - "flame.type=app"
       - "flame.name=Stremio Addon Manager"
-      - "flame.url=https://${ADDON_MANAGER_HOSTNAME?}"
+      - "flame.url=https://${ADDON_MANAGER_SUBDOMAIN}.${DOMAIN}"
     profiles:
       - addon-manager
       - stremio
