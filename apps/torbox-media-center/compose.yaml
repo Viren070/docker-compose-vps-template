@@ -1,24 +1,6 @@
 services:
   torbox-media-center:
-      # build:
-      #   context: https://github.com/TorBox-App/torbox-media-center.git
-      #   #dockerfile: dockerfile
-      #   dockerfile_inline: |
-      #     FROM --platform=linux/arm64 python:3.10.12-bookworm
-
-      #     WORKDIR /app
-      #     COPY requirements.txt .
-
-      #     RUN pip install --no-cache-dir -r requirements.txt
-
-      #     COPY . .
-
-      #     ENV TORBOX_API_KEY=
-      #     ENV MOUNT_METHOD=strm
-      #     ENV MOUNT_PATH=/torbox
-
-      #     CMD ["python", "main.py"]
-      image: mikewazar/torbox-media-center:latest
+      image: anonymoussystems/torbox-media-center:main
       container_name: torbox-media-center
       stdin_open: true
       tty: true
