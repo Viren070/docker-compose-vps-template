@@ -1,0 +1,79 @@
+services:
+  trakt-posters:
+    image: trakt-posters:latest
+    container_name: trakt-posters
+    restart: unless-stopped
+    expose:
+      - 3000
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - BASE_URL=https://${TRAKT_POSTERS_HOSTNAME?}
+      - TRAKT_CLIENT_ID=${TRAKT_CLIENT_ID?}
+      - TRAKT_CLIENT_SECRET=${TRAKT_CLIENT_SECRET?}
+      - TMDB_API_KEY=${TMDB_API_KEY?}
+      - RPDB_API_KEY=${RPDB_API_KEY?}
+      - REDIS_URL=redis://trakt-posters_redis:6379
+      - POSTGRES_URL=postgresql://postgres:postgres@trakt-posters_postgres:5432/trakt_posters
+      - CACHE_TTL_POSTERS=86400  # 1 day
+      - CACHE_TTL_METADATA=3600  # 1 hour
+      - CACHE_TTL_TRAKT=1800     # 30 minutes
+    volumes:
+      - ${DOCKER_DATA_DIR}/trakt-posters/logs:/app/logs
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.trakt-posters.rule=Host(`${TRAKT_POSTERS_HOSTNAME?}`)"
+      - "traefik.http.routers.trakt-posters.entrypoints=websecure"
+      - "traefik.http.routers.trakt-posters.tls.certresolver=letsencrypt"
+      - "traefik.http.services.trakt-posters.loadbalancer.server.port=3000"
+    depends_on:
+      trakt-posters_postgres:
+        condition: service_healthy
+      trakt-posters_redis:
+        condition: service_healthy
+    profiles:
+      - trakt-posters
+      - stremio
+      - all
+
+  trakt-posters_postgres:
+    image: postgres:16.4
+    container_name: trakt-posters_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: trakt_posters
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ${DOCKER_DATA_DIR}/trakt-posters/db:/var/lib/postgresql/data
+    expose:
+      - 5432
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d trakt_posters"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    profiles:
+      - trakt-posters
+      - stremio
+      - all
+
+  trakt-posters_redis:
+    image: redis:7-alpine
+    container_name: trakt-posters_redis
+    restart: unless-stopped
+    expose:
+      - 6379
+    volumes:
+      - ${DOCKER_DATA_DIR}/trakt-posters/redis:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    profiles:
+      - trakt-posters
+      - stremio
+      - all

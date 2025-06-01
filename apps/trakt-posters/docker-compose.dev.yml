@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  trakt-posters-dev:
+    build: .
+    container_name: trakt-posters-dev
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - BASE_URL=http://localhost:3000
+      - TRAKT_CLIENT_ID=${TRAKT_CLIENT_ID}
+      - TRAKT_CLIENT_SECRET=${TRAKT_CLIENT_SECRET}
+      - TMDB_API_KEY=${TMDB_API_KEY}
+      - RPDB_API_KEY=${RPDB_API_KEY}
+      - REDIS_URL=redis://redis-dev:6379
+      - POSTGRES_URL=postgresql://postgres:postgres@postgres-dev:5432/trakt_posters
+      - CACHE_TTL_POSTERS=300  # 5 minutes for dev
+      - CACHE_TTL_METADATA=180  # 3 minutes for dev
+      - CACHE_TTL_TRAKT=60      # 1 minute for dev
+      - LOG_LEVEL=debug
+    volumes:
+      - ./src:/app/src
+      - ./logs:/app/logs
+    depends_on:
+      postgres-dev:
+        condition: service_healthy
+      redis-dev:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres-dev:
+    image: postgres:16.4
+    container_name: trakt-posters-postgres-dev
+    environment:
+      POSTGRES_DB: trakt_posters
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d trakt_posters"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis-dev:
+    image: redis:7-alpine
+    container_name: trakt-posters-redis-dev
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:

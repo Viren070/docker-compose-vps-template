@@ -54,6 +54,7 @@ include:
   - torbox-manager/compose.yaml
   - torbox-media-center/compose.yaml
   - traefik/compose.yaml
+  - trakt-posters/compose.yaml
   - tweakio/compose.yaml
   - uptime-kuma/compose.yaml
   - vaultwarden/compose.yaml
