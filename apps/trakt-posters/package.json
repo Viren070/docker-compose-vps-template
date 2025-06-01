@@ -1,0 +1,36 @@
+{
+  "name": "trakt-posters",
+  "version": "1.0.0",
+  "description": "Stremio addon for Trakt recently watched and upcoming episodes with RPDB posters",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "docker build -t trakt-posters ."
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.2",
+    "redis": "^4.6.10",
+    "pg": "^8.11.3",
+    "node-cron": "^3.0.3",
+    "winston": "^3.11.0",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4",
+    "express-rate-limit": "^7.1.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "stremio",
+    "addon",
+    "trakt",
+    "tmdb",
+    "rpdb",
+    "posters"
+  ],
+  "author": "OpenHands",
+  "license": "MIT"
+}
