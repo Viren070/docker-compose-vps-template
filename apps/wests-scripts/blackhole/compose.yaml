@@ -9,7 +9,7 @@ services:
       - ${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_SONARR_PATH}:/${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_SONARR_PATH}
       - ${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_RADARR_PATH}:/${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_RADARR_PATH}
       - ${DOCKER_DATA_DIR}/wests-scripts/blackhole/default/logs:/app/logs
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
     env_file:
       - ../.env
     environment:
@@ -44,7 +44,7 @@ services:
       - ${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_SONARR_PATH}4k:/${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_SONARR_PATH}
       - ${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_RADARR_PATH}4k:/${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_RADARR_PATH}
       - ${DOCKER_DATA_DIR}/wests-scripts/blackhole/4k/logs:/app/logs
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
     env_file:
       - ../.env
     environment:
@@ -82,7 +82,7 @@ services:
       - ${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_SONARR_PATH}anime:/${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_SONARR_PATH}
       - ${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_RADARR_PATH}anime:/${BLACKHOLE_BASE_WATCH_PATH}/${BLACKHOLE_RADARR_PATH}
       - ${DOCKER_DATA_DIR}/wests-scripts/blackhole/anime/logs:/app/logs
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
     env_file:
       - ../.env
     environment:

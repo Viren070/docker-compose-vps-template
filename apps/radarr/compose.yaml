@@ -9,7 +9,7 @@ services:
     image: ghcr.io/hotio/radarr:release
     restart: unless-stopped
     volumes:
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
       - ${DOCKER_DATA_DIR}/radarr/default/:/config
       - /usr/bin/rclone:/usr/bin/rclone
     labels:
@@ -43,7 +43,7 @@ services:
     image: ghcr.io/hotio/radarr:release
     restart: unless-stopped
     volumes:
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
       - ${DOCKER_DATA_DIR}/radarr/4k:/config
       - /usr/bin/rclone:/usr/bin/rclone
     labels:
@@ -76,7 +76,7 @@ services:
       - PGID=${PGID}
     restart: unless-stopped
     volumes:
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
       - ${DOCKER_DATA_DIR}/radarr/anime:/config
       - /usr/bin/rclone:/usr/bin/rclone
     labels:

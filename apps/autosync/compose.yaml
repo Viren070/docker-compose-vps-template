@@ -20,7 +20,7 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/autosync/config.yaml:/app/config.yaml
       - /etc/localtime:/etc/localtime:ro
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
     depends_on:
       sonarr:
         condition: service_healthy

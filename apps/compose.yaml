@@ -11,6 +11,7 @@ include:
   - cloudflare-ddns/compose.yaml
   - comet/compose.yaml
   - dash/compose.yaml
+  - decypharr/compose.yaml
   - dockge/compose.yaml
   - dozzle/compose.yaml
   - easynews-plus/compose.yaml
@@ -63,7 +64,11 @@ include:
   - yamtrack/compose.yaml
   - zilean/compose.yaml
   - zipline/compose.yaml
-  - zurg/compose.yaml
+  # Uncomment if you are using zurg and comment out decypharr
+  # There is also a way to use both together, but it requires 2 rclone instances
+  # To use both, update Zurg's rclone service name and its container name to rclone_zurg
+  # You will also need to change Zurg's rclone's `- /mnt/remote/realdebrid:/data:rshared` to `- /mnt/remote/zurg:/data:rshared`
+  # - zurg/compose.yaml
 
 networks:
   default:

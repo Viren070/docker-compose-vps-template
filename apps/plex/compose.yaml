@@ -22,7 +22,7 @@ services:
     volumes:
       - /dev/shm:/dev/shm
       - ${DOCKER_DATA_DIR}/plex/transcodes:/transcode
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
       - ${DOCKER_DATA_DIR}/plex/config:/config
     labels:
       - "traefik.enable=${PLEX_TRAEFIK_ENABLE:-true}"

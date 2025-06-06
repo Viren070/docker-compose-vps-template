@@ -12,7 +12,7 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/bazarr/default/config:/config
       - ${DOCKER_DATA_DIR}/bazarr/default/data:/data
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.bazarr.rule=Host(`${BAZARR_HOSTNAME?}`)"
@@ -43,7 +43,7 @@ services:
     volumes: 
       - ${DOCKER_DATA_DIR}/bazarr/4k/config:/config
       - ${DOCKER_DATA_DIR}/bazarr/4k/data:/data
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.bazarr4k.rule=Host(`${BAZARR4K_HOSTNAME?}`)"

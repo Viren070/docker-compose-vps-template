@@ -5,7 +5,7 @@ services:
     volumes:
       - /mnt/user/anime:/anime
       - /mnt/user/downloads:/downloads
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
       - ${DOCKER_DATA_DIR}/seanime:/root/.config/Seanime
     expose:
       - 43211
