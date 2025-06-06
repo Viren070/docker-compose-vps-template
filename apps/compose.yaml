@@ -44,6 +44,7 @@ include:
   - speedtest-tracker/compose.yaml
   - sshbot/compose.yaml
   - streamystats/compose.yaml
+  - stremio-account-bootstrapper/compose.yaml
   - stremio-catalog-providers/compose.yaml
   - stremio-jackett/compose.yaml
   - stremio-server/compose.yaml
