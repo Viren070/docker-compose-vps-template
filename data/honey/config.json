@@ -140,6 +140,12 @@
 			"icon": "https://addon-manager.yourdomain.com/logo.png"
 		},
 		{
+			"name": "Stremio Account Bootstrapper",
+			"desc": "Stremio account bootstrapper.",
+			"href": "https://stremio-account-bootstrapper.yourdomain.com",
+			"icon": "https://stremio-account-bootstrapper.yourdomain.com/logo.png"
+		},
+		{
 			"name": "Stremio Server",
 			"desc": "Stremio add-on for torrents.",
 			"href": "https://stremio-server.yourdomain.com",
