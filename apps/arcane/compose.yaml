@@ -23,4 +23,4 @@ services:
       - PUBLIC_SESSION_SECRET=
     profiles:
       - arcane
-      - all 
+      - all
