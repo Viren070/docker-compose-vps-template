@@ -21,6 +21,9 @@ services:
       - PGID=${PGID}
       # Session secret - generate with: openssl rand -base64 32
       - PUBLIC_SESSION_SECRET=
+      # First boot credentials
+      # Username: arcane
+      # Password: arcane-admin
     profiles:
       - arcane
       - all
