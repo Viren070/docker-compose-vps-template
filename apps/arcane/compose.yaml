@@ -1,0 +1,26 @@
+services:
+  arcane:
+    image: ghcr.io/ofkm/arcane:latest
+    container_name: arcane
+    restart: unless-stopped
+    expose:
+      - 3000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.arcane.rule=Host(`${ARCANE_HOSTNAME?}`)"
+      - "traefik.http.routers.arcane.entrypoints=websecure"
+      - "traefik.http.routers.arcane.tls.certresolver=letsencrypt"
+      - "traefik.http.services.arcane.loadbalancer.server.port=3000"
+      - "traefik.http.routers.arcane.middlewares=authelia@docker"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${DOCKER_DATA_DIR}/arcane:/app/data
+    environment:
+      - APP_ENV=production
+      - PUID=${PUID}
+      - PGID=${PGID}
+      # Session secret - generate with: openssl rand -base64 32
+      - PUBLIC_SESSION_SECRET=
+    profiles:
+      - arcane
+      - all 

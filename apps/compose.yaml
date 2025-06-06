@@ -1,6 +1,7 @@
 include:
   - authelia/compose.yaml
   - addon-manager/compose.yaml
+  - arcane/compose.yaml
   - aiostreams/compose.yaml
   - aiostremio/compose.yaml
   - anime-kitsu/compose.yaml
