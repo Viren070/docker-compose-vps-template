@@ -87,6 +87,7 @@ services:
       - POSTGRES_USER=debridav
       - POSTGRES_PASSWORD=debridav
       - POSTGRES_DB=debridav
+      - PGUSER=debridav
       - PGDATA=/var/lib/postgresql/data/pgdata
     volumes:
       - ${DOCKER_DATA_DIR}/debridav/postgres:/var/lib/postgresql/data
