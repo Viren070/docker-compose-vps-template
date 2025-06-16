@@ -29,8 +29,15 @@ services:
       - TORBOX_APIKEY=${TORBOX_API_KEY}
     volumes:
       - ${DEBRIDAV_ROOT_HOST_FS}:${DEBRIDAV_ROOT_PATH}
-    ports:
-      - "${DEBRIDAV_PORT}:8080"
+    expose:
+      - 8080
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.debridav.rule=Host(`${DEBRIDAV_HOSTNAME?}`)"
+      - "traefik.http.routers.debridav.entrypoints=websecure"
+      - "traefik.http.routers.debridav.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.debridav.middlewares=authelia@docker"
+      - "traefik.http.services.debridav.loadbalancer.server.port=8080"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health/readiness" ]
       interval: 2s
@@ -61,15 +68,16 @@ services:
     depends_on:
       debridav:
         condition: service_healthy
-    command: "mount debridav: $DEBRIDAV_MOUNT_PATH_CONTAINERS 
-              --allow-other 
-              --allow-non-empty 
-              --vfs-cache-mode off 
-              --rc-enable-metrics
-              --metrics-addr :9002
-              --low-level-retries=1
-              --dir-cache-time=1s
-              -vv"
+    command: >
+      mount debridav: ${DEBRIDAV_MOUNT_PATH_CONTAINERS}
+      --allow-other
+      --allow-non-empty
+      --vfs-cache-mode off
+      --rc-enable-metrics
+      --metrics-addr :9002
+      --low-level-retries=1
+      --dir-cache-time=1s
+      -vv
 
   postgres-debridav:
     image: postgres:latest
