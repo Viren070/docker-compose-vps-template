@@ -35,7 +35,27 @@ Prerequisites:
    docker compose --profile required up -d
    ```
 5. Now, you can either start adding other `profiles` to the `COMPOSE_PROFILES` environment variable or use the `all` profile and fill in any other `.env` files if they exist for the services you want to use.
-6. Finally, ensure you are in the root directory of the apps folder and not inside an app-specific folder (You can check this by running `pwd` and ensuring it returns `/opt/docker/apps`) and run this command to start all the services (according to your profiles in the `.env`)
+6. Note : Additional Step for DebriDav (WebDAV Mount Directory)
+
+If you're using DebriDav (via debrid_media_server profile), you need to prepare the mount point on the host system before starting Docker.
+
+This ensures that rclone can correctly mount DebriDav’s WebDAV interface and that *arr services (Sonarr, Radarr, etc.) and Jellyfin can access media without permission issues.
+Run the following commands:
+
+sudo mkdir -p /mnt/remote/debridav
+sudo chown 1001:1001 /mnt/remote/debridav
+
+Why this matters:
+
+    mkdir -p ensures the target mount folder exists (Docker won’t create it automatically).
+
+    chown sets correct ownership matching your container's user (PUID=1001, PGID=1001) to prevent read/write permission issues across rclone and other services.
+
+    This path should match the value in your .env file:
+
+    DEBRIDAV_MOUNT_PATH_HOST_FS=/mnt/remote/debridav
+
+7. Finally, ensure you are in the root directory of the apps folder and not inside an app-specific folder (You can check this by running `pwd` and ensuring it returns `/opt/docker/apps`) and run this command to start all the services (according to your profiles in the `.env`)
    ```
    docker compose up -d
    ```
