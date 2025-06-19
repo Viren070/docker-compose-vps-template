@@ -3,12 +3,17 @@ services:
     image: ghcr.io/skjaere/debridav:v0
     container_name: debridav
     restart: unless-stopped
+    user: "${PUID}:${PGID}"
+    security_opt:
+      - "apparmor:unconfined"
     env_file:
       - .env
     environment:
       - PUID=${PUID}
       - PGID=${PGID}
+      - UMASK=002
       - TZ=${TZ}
+      
       - DEBRIDAV_ROOTPATH=${DEBRIDAV_ROOT_PATH}
       - DEBRIDAV_DOWNLOADPATH=${DEBRIDAV_DOWNLOAD_PATH}
       - DEBRIDAV_MOUNTPATH=${DEBRIDAV_MOUNT_PATH_CONTAINERS}
@@ -50,7 +55,7 @@ services:
       - PGID=${PGID}
     volumes:
       - ${DEBRIDAV_MOUNT_PATH_HOST_FS}:${DEBRIDAV_MOUNT_PATH_CONTAINERS}:rshared
-      - ./rclone.conf:/config/rclone/rclone.conf
+      - /opt/docker/data/debridav/rclone.conf:/config/rclone/rclone.conf
       - /dev/fuse:/dev/fuse
     cap_add:
       - SYS_ADMIN
