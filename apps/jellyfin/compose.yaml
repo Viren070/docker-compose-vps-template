@@ -11,7 +11,7 @@ services:
       - PGID=${PGID}
     volumes:
       - ${DOCKER_DATA_DIR}/jellyfin:/config
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.jellyfin.rule=Host(`${JELLYFIN_HOSTNAME?}`)"

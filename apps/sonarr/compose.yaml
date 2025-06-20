@@ -16,7 +16,7 @@ services:
       - "traefik.http.routers.sonarr.middlewares=authelia@docker"
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
     volumes:
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
       - ${DOCKER_DATA_DIR}/sonarr/default:/config
       - /usr/bin/rclone:/usr/bin/rclone
     depends_on:
@@ -48,7 +48,7 @@ services:
       - "traefik.http.routers.sonarr4k.middlewares=authelia@docker"
       - "traefik.http.services.sonarr4k.loadbalancer.server.port=8989"
     volumes:
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
       - ${DOCKER_DATA_DIR}/sonarr/4k:/config
       - /usr/bin/rclone:/usr/bin/rclone
     depends_on:
@@ -82,7 +82,7 @@ services:
       - "traefik.http.routers.sonarranime.middlewares=authelia@docker"
       - "traefik.http.services.sonarranime.loadbalancer.server.port=8989"
     volumes:
-      - /mnt:/mnt
+      - /mnt:/mnt:rslave
       - ${DOCKER_DATA_DIR}/sonarr/anime:/config
       - /usr/bin/rclone:/usr/bin/rclone
     depends_on:
