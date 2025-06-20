@@ -14,6 +14,12 @@
 	},
 	"services": [
 		{
+			"name": "Arcane",
+			"desc": "Personal dashboard.",
+			"href": "https://arcane.yourdomain.com",
+			"icon": "https://github.com/ofkm/arcane/blob/main/.github/assets/arcane.png"
+		},
+		{
 			"name": "dash.",
 			"desc": "Personal dashboard.",
 			"href": "https://dash.yourdomain.com",
