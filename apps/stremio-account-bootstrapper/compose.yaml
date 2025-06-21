@@ -5,8 +5,8 @@ services:
       dockerfile: Dockerfile
     container_name: stremio-account-bootstrapper
     restart: unless-stopped
-    ports:
-      - 8081:80
+    expose:
+      - 80
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.stremio-account-bootstrapper.rule=Host(`${STREMIO_ACCOUNT_BOOTSTRAPPER_HOSTNAME?}`)"
