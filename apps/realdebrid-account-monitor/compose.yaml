@@ -9,6 +9,8 @@ services:
     volumes:
       - ${DOCKER_DATA_DIR}/realdebrid-account-monitor:/app/data
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=false"
     profiles:
       - all
       - realdebrid-account-monitor
