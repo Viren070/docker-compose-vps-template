@@ -12,7 +12,8 @@
             "auto_expire_links_after": "3d",
             "folder_naming": "original_no_ext",
             "rc_url": "http://rclone:9990",
-            "download_uncached": false
+            "download_uncached": false,
+            "serve_from_rclone": true
         }
     ],
     "max_cache_size": 10000,
@@ -35,7 +36,7 @@
         "run_on_start": false,
         "use_webdav": true,
         "auto_process": true,
-        "_comment_add-this-if-you-are-using-zurg": "zurg_url: http://zurg:9999"
+        "_comment_addThisIfYouAreUsingZurg_zurg_url": "http://zurg:9999"
     },
     "arrs": [
         {
