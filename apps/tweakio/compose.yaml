@@ -9,7 +9,7 @@ services:
     network_mode: service:warp
     user: $PUID:$PGID
     volumes:
-      - ${DOCKER_DATA_DIR}/tweakio/config.yaml:/app/config.yaml
+      - ./config.yaml:/app/config.yaml
     profiles:
       - all
       - debrid_media_server

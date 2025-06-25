@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     user: $PUID:$PGID
     volumes:
-      - ${DOCKER_DATA_DIR}/honey:/app/dist/config
-      - ${DOCKER_DATA_DIR}/honey/img:/app/dist/img/custom
+      - ./config.json:/app/dist/config/config.json
+      - ${DOCKER_DATA_DIR}/honey:/app/dist/img/custom # place any images in this folder, and use custom/image_name.jpg in the config.json
     expose:
       - 4173
     labels:

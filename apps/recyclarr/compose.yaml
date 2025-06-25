@@ -7,7 +7,14 @@ services:
     environment:
       - TZ=${TZ:-UTC}
     volumes:
-      - ${DOCKER_DATA_DIR}/recyclarr:/config
+      # - ${DOCKER_DATA_DIR}/recyclarr:/config
+      - ${DOCKER_DATA_DIR}/recyclarr/cache:/config/cache
+      - ${DOCKER_DATA_DIR}/recyclarr/logs:/config/logs
+      - ${DOCKER_DATA_DIR}/recyclarr/repositories:/config/repositories
+      - ${DOCKER_DATA_DIR}/recyclarr/configs:/config/configs
+      - ${DOCKER_DATA_DIR}/recyclarr/includes:/config/includes
+      - ./recyclarr.yml:/config/recyclarr.yml
+      - ./secrets.yml:/config/secrets.yml
     depends_on:
       - sonarr
       - sonarr4k

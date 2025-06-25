@@ -6,7 +6,7 @@ services:
     healthcheck:
       test: curl -f localhost:9999/dav/version.txt || exit 1
     volumes:
-      - ${DOCKER_DATA_DIR}/zurg/config-${ZURG_CONFIG_VERSION:-v0.9}.yml:/app/config.yml
+      - ./config-${ZURG_CONFIG_VERSION:-v0.9}.yml:/app/config.yml
       - ${DOCKER_DATA_DIR}/zurg/data:/app/data
       - ${DOCKER_DATA_DIR}/zurg/logs:/app/logs
     labels: 
@@ -30,7 +30,7 @@ services:
       PGID: ${PGID}
     volumes:
       - /mnt/remote/realdebrid:/data:rshared
-      - ${DOCKER_DATA_DIR}/zurg/rclone.conf:/config/rclone/rclone.conf
+      - ./rclone.conf:/config/rclone/rclone.conf
       - /mnt:/mnt
     cap_add:
       - SYS_ADMIN

@@ -24,7 +24,7 @@ services:
       - "traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader=true"
       - "traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Email,Remote-Name"
     volumes:
-      - '${DOCKER_DATA_DIR}/authelia/config:/config'
+      - './config:/config'
     depends_on:
       authelia_redis:
         condition: service_healthy
