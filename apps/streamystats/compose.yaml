@@ -1,12 +1,15 @@
 services:
   streamystats_frontend:
-    image: fredrikburmester/streamystats-nextjs:edge
+    image: fredrikburmester/streamystats-v2-nextjs:latest
     container_name: streamystats_frontend
     restart: unless-stopped
     expose:
       - 3000
     environment:
-      API_URL: "http://streamystats_backend:4000/api"
+      NODE_ENV: "production"
+      DATABASE_URL: "postgresql://streamystats:streamystats@streamystats_postgres:5432/streamystats"
+      JOB_SERVER_URL: "http://streamystats_backend:3005"
+      HOSTNAME: "0.0.0.0"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.streamystats_frontend.rule=Host(`${STREAMYSTATS_HOSTNAME?}`)"
@@ -15,29 +18,63 @@ services:
       - "traefik.http.routers.streamystats_frontend.middlewares=authelia@docker"
       - "traefik.http.services.streamystats_frontend.loadbalancer.server.port=3000"
     depends_on:
-      - streamystats_backend
+      streamystats_postgres:
+        condition: service_healthy
+      streamystats_migrations:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000/api/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     profiles:
       - streamystats
       - all
 
   streamystats_backend:
-    image: fredrikburmester/streamystats-phoenix:edge
+    image: fredrikburmester/streamystats-v2-job-server:latest
     container_name: streamystats_backend
     restart: unless-stopped
     expose:
-      - 4000
+      - 3005
     environment:
-      DATABASE_URL: "postgres://streamystats:streamystats@streamystats_postgres:5432/streamystats"
-      SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+      NODE_ENV: "production"
+      DATABASE_URL: "postgresql://streamystats:streamystats@streamystats_postgres:5432/streamystats"
+      PORT: 3005
     depends_on:
       streamystats_postgres:
         condition: service_healthy
+      streamystats_migrations:
+        condition: service_completed_successfully
+    healthcheck: 
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3005/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     profiles:
       - streamystats
       - all
     
   streamystats_postgres:
-    image: pgvector/pgvector:pg16
+    image: tensorchord/vchord-postgres:pg17-v0.4.1
     container_name: streamystats_postgres
     restart: unless-stopped
     expose:
@@ -54,6 +91,23 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    profiles:
+      - streamystats
+      - all
+  
+  streamystats_migrations:
+    image: fredrikburmester/streamystats-v2-migrate:latest
+    container_name: streamystats_migrations
+    restart: "no"
+    environment:
+      - DATABASE_URL=postgresql://streamystats:streamystats@streamystats_postgres:5432/streamystats
+      - POSTGRES_USER=streamystats
+      - POSTGRES_PASSWORD=streamystats
+      - POSTGRES_DB=streamystats
+      - PGPASSWORD=streamystats
+    depends_on:
+      streamystats_postgres:
+        condition: service_healthy
     profiles:
       - streamystats
       - all

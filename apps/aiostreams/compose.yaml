@@ -1,6 +1,6 @@
 services:
   aiostreams:
-    image: ghcr.io/viren070/aiostreams:latest
+    image: ghcr.io/viren070/aiostreams:${AIOSTREAMS_TAG:-latest}
     container_name: aiostreams
     restart: unless-stopped
     expose:
@@ -13,12 +13,8 @@ services:
       - "traefik.http.routers.aiostreams.entrypoints=websecure"
       - "traefik.http.routers.aiostreams.tls.certresolver=letsencrypt"
       - "traefik.http.routers.aiostreams.middlewares=authelia@docker"
-    healthcheck:
-      test: wget -qO- http://localhost:3000/health
-      interval: 1m
-      timeout: 10s
-      retries: 5
-      start_period: 10s
+    volumes:
+      - ${DOCKER_DATA_DIR}/aiostreams:/app/data
     profiles:
       - aiostreams
       - stremio

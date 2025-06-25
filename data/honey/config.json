@@ -14,6 +14,12 @@
 	},
 	"services": [
 		{
+			"name": "Arcane",
+			"desc": "Personal dashboard.",
+			"href": "https://arcane.yourdomain.com",
+			"icon": "https://github.com/ofkm/arcane/blob/main/.github/assets/arcane.png"
+		},
+		{
 			"name": "dash.",
 			"desc": "Personal dashboard.",
 			"href": "https://dash.yourdomain.com",
@@ -138,6 +144,12 @@
 			"desc": "Stremio add-on for torrents.",
 			"href": "https://addon-manager.yourdomain.com",
 			"icon": "https://addon-manager.yourdomain.com/logo.png"
+		},
+		{
+			"name": "Stremio Account Bootstrapper",
+			"desc": "Stremio account bootstrapper.",
+			"href": "https://stremio-account-bootstrapper.yourdomain.com",
+			"icon": "https://stremio-account-bootstrapper.yourdomain.com/logo.png"
 		},
 		{
 			"name": "Stremio Server",
