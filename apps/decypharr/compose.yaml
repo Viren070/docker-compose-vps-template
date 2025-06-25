@@ -1,0 +1,84 @@
+services:
+  decypharr:
+    image: cy01/blackhole:latest # or cy01/blackhole:beta
+    container_name: decypharr
+    restart: unless-stopped
+    user: "${PUID}:${PGID}"
+    security_opt:
+      - "apparmor:unconfined"
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - UMASK=002
+    volumes:
+      - /mnt/:/mnt:rslave
+      - ${DOCKER_DATA_DIR}/decypharr/:/app # config.json must be in this directory
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.decypharr.rule=Host(`${DECYPHARR_HOSTNAME?}`)"
+      - "traefik.http.routers.decypharr.entrypoints=websecure"
+      - "traefik.http.routers.decypharr.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.decypharr.middlewares=authelia@docker"
+    profiles:
+      - decypharr
+      - debrid_media_server
+      - all
+
+  rclone:
+    image: rclone/rclone:latest
+    container_name: rclone
+    restart: unless-stopped
+    environment:
+      TZ: ${TZ:-UTC}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      RCLONE_BUFFER_SIZE: "0"
+      RCLONE_VFS_FAST_FINGERPRINT: "false"
+      RCLONE_VFS_READ_CHUNK_SIZE: "2M"
+      RCLONE_VFS_READ_CHUNK_SIZE_LIMIT: "32M"
+      RCLONE_VFS_READ_AHEAD: "2M"
+      RCLONE_VFS_READ_WAIT: "30ms"
+      RCLONE_VFS_CACHE_MIN_FREE_SPACE: "1G"
+      RCLONE_VFS_CACHE_MAX_AGE: "72h"
+    volumes:
+      - /mnt/remote/realdebrid:/data:rshared 
+      - ${DOCKER_DATA_DIR}/decypharr/rclone.conf:/config/rclone/rclone.conf
+      - /mnt:/mnt
+      - ${DOCKER_DATA_DIR}/decypharr/cache:/cache
+    cap_add:
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    devices:
+      - /dev/fuse:/dev/fuse:rwm
+    depends_on:
+      - decypharr
+    command: >
+      mount decypharr: /data
+      --allow-non-empty
+      --uid=${PUID}
+      --gid=${PGID}
+      --umask=002
+      --allow-other
+      --log-level=INFO
+      --vfs-fast-fingerprint
+      --async-read=true
+      --use-mmap
+      --no-checksum
+      --no-modtime
+      --rc
+      --rc-addr=0.0.0.0:9990
+      --rc-no-auth
+      --rc-web-gui
+      --rc-web-gui-no-open-browser
+      --user-agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.131 Safari/537.36'
+      --dir-cache-time=10s
+      --vfs-cache-mode=full
+      --vfs-cache-max-size=100G
+      --vfs-cache-poll-interval=30s
+      --cache-dir=/cache
+      --vfs-read-chunk-size-limit=32M
+    profiles:
+      - all
+      - decypharr
+      - debrid_media_server
