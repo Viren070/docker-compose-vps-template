@@ -64,7 +64,7 @@ services:
       - PGID=${PGID}
     volumes:
       - ${DEBRIDAV_MOUNT_PATH_HOST_FS}:${DEBRIDAV_MOUNT_PATH_CONTAINERS}:rshared
-      - /opt/docker/data/debridav/rclone.conf:/config/rclone/rclone.conf
+      - ./rclone.conf:/config/rclone/rclone.conf
       - /dev/fuse:/dev/fuse
     cap_add:
       - SYS_ADMIN

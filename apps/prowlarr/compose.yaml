@@ -11,6 +11,7 @@ services:
       - 9696
     volumes:
       - ${DOCKER_DATA_DIR}/prowlarr:/config
+      - ./definitions:/config/Definitions/Custom
     restart: unless-stopped
     labels:
       - "traefik.enable=true"

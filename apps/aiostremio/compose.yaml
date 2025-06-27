@@ -6,7 +6,7 @@ services:
     expose:
       - 8469
     volumes:
-     - ${DOCKER_DATA_DIR}/aiostremio:/app/data
+     - ./config.json:/app/data/config.json
      - ${DOCKER_DATA_DIR}/aiostremio/db:/app/db
     env_file:
       - .env

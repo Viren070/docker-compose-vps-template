@@ -11,8 +11,12 @@ services:
       - PGID=${PGID}
       - UMASK=002
     volumes:
-      - /mnt/:/mnt:rslave
-      - ${DOCKER_DATA_DIR}/decypharr/:/app # config.json must be in this directory
+      - /mnt:/mnt:rslave
+      - ./config.json:/app/config.json
+      - ${DOCKER_DATA_DIR}/decypharr/repair.json:/app/repair.json
+      - ${DOCKER_DATA_DIR}/decypharr/torrents.json:/app/torrents.json
+      - ${DOCKER_DATA_DIR}/decypharr/logs:/app/logs
+      - ${DOCKER_DATA_DIR}/decypharr/cache:/app/cache
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.decypharr.rule=Host(`${DECYPHARR_HOSTNAME?}`)"
@@ -42,7 +46,7 @@ services:
       RCLONE_VFS_CACHE_MAX_AGE: "72h"
     volumes:
       - /mnt/remote/realdebrid:/data:rshared 
-      - ${DOCKER_DATA_DIR}/decypharr/rclone.conf:/config/rclone/rclone.conf
+      - ./rclone.conf:/config/rclone/rclone.conf
       - /mnt:/mnt
       - ${DOCKER_DATA_DIR}/decypharr/cache:/cache
     cap_add:
