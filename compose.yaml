@@ -12,7 +12,6 @@ include:
   - apps/cloudflare-ddns/compose.yaml
   - apps/comet/compose.yaml
   - apps/dash/compose.yaml
-  - apps/debridav/compose.yaml
   - apps/decypharr/compose.yaml
   - apps/dockge/compose.yaml
   - apps/dozzle/compose.yaml
@@ -72,7 +71,8 @@ include:
   # To use both, update Zurg's rclone service name and its container name to rclone_zurg
   # You will also need to change Zurg's rclone's `- apps//mnt/remote/realdebrid:/data:rshared` to `- apps//mnt/remote/zurg:/data:rshared`
   # - apps/zurg/compose.yaml
-
+  # same as above for using debridav, Uncomment debridav and comment out decypharr and zurg
+  # - apps/debridav/compose.yaml
 networks:
   default:
     name: ${DOCKER_NETWORK:-aio_default}

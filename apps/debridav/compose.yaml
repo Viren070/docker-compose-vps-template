@@ -54,9 +54,9 @@ services:
       - debridav
       - all
 
-  debridav_rclone:
+  rclone:
     image: rclone/rclone:latest
-    container_name: debridav_rclone
+    container_name: rclone
     restart: unless-stopped
     environment:
       - TZ=${TZ}
