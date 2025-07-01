@@ -8,6 +8,7 @@ include:
   - apps/autosync/compose.yaml
   - apps/bazarr/compose.yaml
   - apps/beszel/compose.yaml
+  - apps/borgmatic/compose.yaml
   - apps/byparr/compose.yaml
   - apps/cloudflare-ddns/compose.yaml
   - apps/comet/compose.yaml
