@@ -1,0 +1,27 @@
+services:
+  borgmatic:
+    image: ghcr.io/borgmatic-collective/borgmatic:latest
+    container_name: borgmatic
+    restart: unless-stopped
+
+    volumes:
+      - /opt/docker:/mnt/source:ro  # 🔍 Maps your entire stack (read-only) as the backup source
+      - ${DOCKER_DATA_DIR}/borgmatic:/etc/borgmatic  # ⚙️ Config folder containing config.yaml and optional .env
+      - ${DOCKER_DATA_DIR}/borgmatic/.ssh:/root/.ssh  # 🔐 SSH keys for connecting to BorgBase repo
+      - ${DOCKER_DATA_DIR}/borgmatic/repo:/mnt/borg-repository  # 💾 Optional local Borg repo (not used in your case)
+      - ${DOCKER_DATA_DIR}/borgmatic/borg:/root/.config/borg  # 🧠 Key + cache metadata for Borg
+      - ${DOCKER_DATA_DIR}/borgmatic/cache:/root/.cache/borg  # ⚡ Deduplication metadata
+      - ${DOCKER_DATA_DIR}/borgmatic/logs:/var/log/borgmatic  # 📝 Optional log folder (can be reviewed manually)
+
+    environment:
+      - TZ=${TZ}  # 🌍 Timezone (from global .env)
+      - PUID=${PUID}  # 👤 User ID (from global .env)
+      - PGID=${PGID}  # 👥 Group ID (from global .env)
+      - BORG_PASSPHRASE=${BORG_PASSPHRASE}  # 🔐 Encryption passphrase for backup
+      - BORG_REPO_URL=${BORG_REPO_URL}  # 📦 SSH repo path from BorgBase
+      - BACKUP_CRON=0 4 * * 0  # 🕓 Run backup every Sunday at 4 AM
+      - RUN_ON_STARTUP=true   # 🚀 Also run once on container start
+
+    profiles:
+      - borgmatic  # 📂 So you can include/exclude via Docker Compose profiles
+      - all        # ✅ Include in full stack profile
