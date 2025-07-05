@@ -1,6 +1,6 @@
 services:
   debridav:
-    image: ghcr.io/skjaere/debridav:v0
+    image: ghcr.io/skjaere/debridav:latest
     container_name: debridav
     restart: unless-stopped
     user: "${PUID}:${PGID}"
