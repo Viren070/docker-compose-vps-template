@@ -1,0 +1,22 @@
+services:
+  stremthru:
+    image: muniftanjim/stremthru:latest
+    container_name: stremthru
+    restart: unless-stopped
+    expose:
+      - 8080
+    env_file:
+      - .env
+    volumes:
+      - ${DOCKER_DATA_DIR}/stremthru:/app/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.stremthru.rule=Host(`${STREMTHRU_HOSTNAME?}`)"
+      - "traefik.http.routers.stremthru.entrypoints=websecure"
+      - "traefik.http.routers.stremthru.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.stremthru.middlewares=authelia@docker"
+      - "traefik.http.services.stremthru.loadbalancer.server.port=8080"
+    profiles:
+      - stremthru
+      - stremio
+      - all

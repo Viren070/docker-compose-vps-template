@@ -1,0 +1,22 @@
+services:
+  librespeed:
+    image: ghcr.io/librespeed/speedtest:latest
+    container_name: librespeed
+    restart: unless-stopped
+    expose:
+      - 8080
+    environment:
+      MODE: standalone
+      TITLE: ${LIBRESPEED_TITLE:-LibreSpeed}
+      TELEMETRY: "false"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.librespeed.rule=Host(`${LIBRESPEED_HOSTNAME?}`)"
+      - "traefik.http.routers.librespeed.entrypoints=websecure"
+      - "traefik.http.routers.librespeed.tls.certresolver=letsencrypt"
+      - "traefik.http.services.librespeed.loadbalancer.server.port=8080"
+    volumes:
+      - ${DOCKER_DATA_DIR}/librespeed:/database
+    profiles:
+      - librespeed
+      - all

@@ -1,0 +1,30 @@
+services:
+  jackett:
+    image: linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ:-UTC}  
+    expose:
+      - 9117
+    volumes:
+      - ${DOCKER_DATA_DIR}/jackett:/config
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jackett.rule=Host(`${JACKETT_HOSTNAME?}`)"
+      - "traefik.http.routers.jackett.entrypoints=websecure"
+      - "traefik.http.routers.jackett.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.jackett.middlewares=authelia@docker"
+    healthcheck:
+      test: curl -f http://localhost:9117/health 
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    profiles:
+      - jackett
+      - stremio
+      - all
+      - indexers

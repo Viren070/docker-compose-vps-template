@@ -1,0 +1,39 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    env_file:
+      - .env
+    volumes:
+      - ${DOCKER_DATA_DIR}/gluetun:/gluetun
+    healthcheck:
+      test: ["CMD", "/gluetun-entrypoint", "healthcheck"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 1m
+    profiles:
+      - gluetun
+      - all
+
+  # Use Gost as a proxy because its better.
+  gost:
+    image: ginuerzh/gost
+    container_name: gost
+    restart: unless-stopped
+    network_mode: service:gluetun
+    command: "-L :8080"
+    depends_on:
+      gluetun:
+        condition: service_healthy
+        restart: true
+    profiles:
+      - gluetun
+      - all
+  
+      

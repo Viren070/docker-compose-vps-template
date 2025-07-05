@@ -1,0 +1,22 @@
+services:
+  # Start page for your serve
+  dash:
+    image: mauricenino/dashdot:latest
+    container_name: dash
+    restart: unless-stopped
+    expose:
+      - 3001
+    privileged: true
+    env_file:
+      - .env
+    volumes:
+      - /:/mnt/host:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dash.rule=Host(`${DASHDOT_HOSTNAME?}`)"
+      - "traefik.http.routers.dash.entrypoints=websecure"
+      - "traefik.http.routers.dash.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.dash.middlewares=authelia@docker"
+    profiles:
+      - dash
+      - all

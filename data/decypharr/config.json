@@ -1,0 +1,76 @@
+{
+    "debrids": [
+        {
+            "name": "realdebrid",
+            "api_key": "",
+            "folder": "/mnt/remote/realdebrid/__all__/",
+            "rate_limit": "250/minute",
+            "use_webdav": true,
+            "torrents_refresh_interval": "15s",
+            "download_links_refresh_interval": "40m",
+            "workers": 200,
+            "auto_expire_links_after": "3d",
+            "folder_naming": "original_no_ext",
+            "rc_url": "http://rclone:9990",
+            "download_uncached": false,
+            "serve_from_rclone": true
+        }
+    ],
+    "max_cache_size": 10000,
+    "qbittorrent": {
+        "download_folder": "/mnt/symlinks/",
+        "categories": [
+            "sonarr",
+            "sonarr4k",
+            "sonarranime",
+            "radarr",
+            "radarr4k",
+            "radarranime"
+        ],
+        "refresh_interval": 5,
+        "skip_pre_cache": false
+    },
+    "repair": {
+        "enabled": true,
+        "interval": "12h",
+        "run_on_start": false,
+        "use_webdav": true,
+        "auto_process": true,
+        "_comment_addThisIfYouAreUsingZurg_zurg_url": "http://zurg:9999"
+    },
+    "arrs": [
+        {
+            "name": "sonarr",
+            "host": "http://sonarr:8989",
+            "token": ""
+        },
+        {
+            "name": "sonarr4k",
+            "host": "http://sonarr4k:8989",
+            "token": ""
+        },
+        {
+            "name": "sonarranime",
+            "host": "http://sonarranime:8989",
+            "token": ""
+        },
+        {
+            "name": "radarr",
+            "host": "http://radarr:7878",
+            "token": ""
+        },
+        {
+            "name": "radarr4k",
+            "host": "http://radarr4k:7878",
+            "token": ""
+        },
+        {
+            "name": "radarranime",
+            "host": "http://radarranime:7878",
+            "token": ""
+        }
+    ],
+    "use_auth": false,
+    "log_level": "info",
+    "port": "8282"
+}

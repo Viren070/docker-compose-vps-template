@@ -1,0 +1,80 @@
+include:
+  - apps/authelia/compose.yaml
+  - apps/addon-manager/compose.yaml
+  - apps/arcane/compose.yaml
+  - apps/aiostreams/compose.yaml
+  - apps/aiostremio/compose.yaml
+  - apps/anime-kitsu/compose.yaml
+  - apps/autosync/compose.yaml
+  - apps/bazarr/compose.yaml
+  - apps/beszel/compose.yaml
+  - apps/borgmatic/compose.yaml
+  - apps/byparr/compose.yaml
+  - apps/cloudflare-ddns/compose.yaml
+  - apps/comet/compose.yaml
+  - apps/dash/compose.yaml
+  - apps/decypharr/compose.yaml
+  - apps/dockge/compose.yaml
+  - apps/dozzle/compose.yaml
+  - apps/easynews-plus/compose.yaml
+  - apps/easynews-plus-plus/compose.yaml
+  - apps/gluetun/compose.yaml
+  - apps/honey/compose.yaml
+  - apps/huntarr/compose.yaml
+  - apps/jackett/compose.yaml
+  - apps/jackettio/compose.yaml
+  - apps/jellyfin/compose.yaml
+  - apps/jellyseer/compose.yaml
+  - apps/kometa/compose.yaml
+  - apps/librespeed/compose.yaml
+  - apps/mediaflow-proxy/compose.yaml
+  - apps/mediafusion/compose.yaml
+  - apps/minecraft/compose.yaml
+  - apps/nzbhydra2/compose.yaml
+  - apps/omg-tv-addon/compose.yaml
+  - apps/overseerr/compose.yaml
+  - apps/plausible/compose.yaml
+  - apps/plex/compose.yaml
+  - apps/plex-trakt-sync/compose.yaml
+  - apps/portainer/compose.yaml
+  - apps/prowlarr/compose.yaml
+  - apps/radarr/compose.yaml
+  - apps/realdebrid-account-monitor/compose.yaml
+  - apps/recyclarr/compose.yaml
+  - apps/seanime/compose.yaml
+  - apps/searxng/compose.yaml
+  - apps/sonarr/compose.yaml
+  - apps/speedtest-tracker/compose.yaml
+  - apps/sshbot/compose.yaml
+  - apps/streamystats/compose.yaml
+  - apps/stremio-account-bootstrapper/compose.yaml
+  - apps/stremio-catalog-providers/compose.yaml
+  - apps/stremio-jackett/compose.yaml
+  - apps/stremio-server/compose.yaml
+  - apps/stremio-trakt-addon/compose.yaml
+  - apps/stremthru/compose.yaml
+  - apps/tautulli/compose.yaml
+  - apps/tmdb-addon/compose.yaml
+  - apps/torbox-manager/compose.yaml
+  - apps/torbox-media-center/compose.yaml
+  - apps/traefik/compose.yaml
+  - apps/tweakio/compose.yaml
+  - apps/uptime-kuma/compose.yaml
+  - apps/vaultwarden/compose.yaml
+  - apps/warp/compose.yaml
+  - apps/watchtower/compose.yaml
+  - apps/wests-scripts/compose.yaml
+  - apps/yamtrack/compose.yaml
+  - apps/zilean/compose.yaml
+  - apps/zipline/compose.yaml
+  # Uncomment if you are using zurg and comment out decypharr
+  # There is also a way to use both together, but it requires 2 rclone instances
+  # To use both, update Zurg's rclone service name and its container name to rclone_zurg
+  # You will also need to change Zurg's rclone's `- apps//mnt/remote/realdebrid:/data:rshared` to `- apps//mnt/remote/zurg:/data:rshared`
+  # - apps/zurg/compose.yaml
+  # same as above for using debridav, Uncomment debridav and comment out decypharr and zurg
+  # - apps/debridav/compose.yaml
+networks:
+  default:
+    name: ${DOCKER_NETWORK:-aio_default}
+    external: ${DOCKER_NETWORK_EXTERNAL:-false}

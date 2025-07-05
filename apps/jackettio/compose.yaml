@@ -1,0 +1,26 @@
+services:
+  jackettio:
+    image: ghcr.io/telkaoss/jackettio:latest
+    container_name: jackettio
+    restart: unless-stopped
+    user: $PUID:$PGID
+    expose:
+      - 4000
+    environment:
+      - JACKETT_URL=${JACKETT_URL?}
+      - JACKETT_API_KEY=${JACKETT_API_KEY?}
+      - TMDB_ACCESS_TOKEN=${TMDB_ACCESS_TOKEN?}
+      - DATA_FOLDER=/data
+    volumes:
+      - ${DOCKER_DATA_DIR}/jackettio:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.jackettio.rule=Host(`${JACKETTIO_HOSTNAME?}`)"
+      - "traefik.http.routers.jackettio.entrypoints=websecure"
+      - "traefik.http.routers.jackettio.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.jackettio.middlewares=authelia@docker"
+    profiles:
+      - jackettio
+      - stremio
+      - all
+    

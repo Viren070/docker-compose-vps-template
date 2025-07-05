@@ -1,0 +1,24 @@
+# yamllint disable rule:line-length
+---
+###############################################################
+#                         Users Database                      #
+###############################################################
+
+# This file can be used if you do not have an LDAP set up.
+
+users:
+  ## change this to the username you want to use
+  user1:  
+    disabled: false
+    ## change this to the display name you want to use
+    displayname: "User"  
+    ## Generate the argon 2 password hash using the following command
+    ## sudo docker run --rm authelia/authelia:latest authelia crypto hash generate argon2 --password 'yourpassword'
+    ## (currently the password is 'password')
+    password: "$argon2id$v=19$m=65536,t=3,p=4$9WCjag9NY9e/8OYGnPV1rg$OtXfECdXxgY+nI0ELWyRlSGKYV0a5QeW+r6mL1nXmoo"  
+    email: authelia@authelia.com
+    groups:
+      - admins
+      - dev
+...
+# yamllint enable rule:line-length

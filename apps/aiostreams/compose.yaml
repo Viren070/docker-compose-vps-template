@@ -1,0 +1,21 @@
+services:
+  aiostreams:
+    image: ghcr.io/viren070/aiostreams:${AIOSTREAMS_TAG:-latest}
+    container_name: aiostreams
+    restart: unless-stopped
+    expose:
+      - 3000
+    env_file:
+      - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.aiostreams.rule=Host(`${AIOSTREAMS_HOSTNAME?}`)"
+      - "traefik.http.routers.aiostreams.entrypoints=websecure"
+      - "traefik.http.routers.aiostreams.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.aiostreams.middlewares=authelia@docker"
+    volumes:
+      - ${DOCKER_DATA_DIR}/aiostreams:/app/data
+    profiles:
+      - aiostreams
+      - stremio
+      - all
